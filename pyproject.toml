@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "qtchair-pyside"
+version = "0.1.0"
+description = ""
+authors = ["cloudw233 <qrz20081004@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.14"
+pyside6-fluent-widgets = {extras = ["full"], version = "^1.7.5"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
