@@ -2,12 +2,16 @@
 name = "qtchair-pyside"
 version = "0.1.0"
 description = ""
+license = "AGPL-3.0"
 authors = ["cloudw233 <qrz20081004@outlook.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.14"
+python = ">=3.10,<3.14"
 pyside6-fluent-widgets = {extras = ["full"], version = "^1.7.5"}
+azure-cognitiveservices-speech = "^1.42.0"
+qasync = "^0.27.1"
 
 
 [build-system]
