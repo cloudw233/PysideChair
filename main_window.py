@@ -10,6 +10,7 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
 from qfluentwidgets import FluentIcon as FIF
 
 from interfaces.home import Home
+from interfaces.weather import Weather
 
 class Widget(QFrame):
 
@@ -31,7 +32,7 @@ class Window(FluentWindow):
 
         # create sub interface
         self.homeInterface = Home() # 主界面
-        self.musicInterface = Widget('Music Interface', self)
+        self.weatherInterface = Weather()
         self.videoInterface = Widget('Video Interface', self)
         self.folderInterface = Widget('Folder Interface', self)
         self.settingInterface = Widget('Setting Interface', self)
@@ -44,8 +45,8 @@ class Window(FluentWindow):
         self.initWindow()
 
     def initNavigation(self):
-        self.addSubInterface(self.homeInterface, FIF.HOME, 'Home')
-        self.addSubInterface(self.musicInterface, FIF.MUSIC, 'Music library')
+        self.addSubInterface(self.homeInterface, FIF.HOME, '主页')
+        self.addSubInterface(self.weatherInterface, FIF.CLOUD, '天气')
         self.addSubInterface(self.videoInterface, FIF.VIDEO, 'Video library')
 
         self.navigationInterface.addSeparator()

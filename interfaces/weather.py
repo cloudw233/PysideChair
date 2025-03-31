@@ -1,51 +1,51 @@
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QLayout,
-                               QSizePolicy, QVBoxLayout, QWidget)
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
+                            QSize, Qt)
+from PySide6.QtGui import (QIcon)
+from PySide6.QtWidgets import (QFrame, QGridLayout, QLayout,
+                               QSizePolicy, QVBoxLayout, QWidget, QStackedWidget,
+                               QLabel)
 
 from qfluentwidgets import (CaptionLabel, CardWidget, ElevatedCardWidget, IconWidget,
-                            SimpleCardWidget, SmoothScrollArea, SubtitleLabel, TitleLabel)
+                            SmoothScrollArea, SubtitleLabel, TitleLabel,
+                            Pivot, qrouter, SegmentedWidget)
 from assets.chair import qtchair_rc
 from assets.weather import weather_rc
 
-class Weather(QWidget):
+class __Weather(QWidget):
+    """ Pivot interface """
 
-    def __init__(self):
-        super().__init__()
-        self.pivot = Pivot(self)
+    Nav = Pivot
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.pivot = self.Nav(self)
         self.stackedWidget = QStackedWidget(self)
         self.vBoxLayout = QVBoxLayout(self)
 
-        self.songInterface = QLabel('Song Interface', self)
-        self.albumInterface = QLabel('Album Interface', self)
-        self.artistInterface = QLabel('Artist Interface', self)
+        self.weatherInterface = Weather7d()
+        # self.albumInterface = QLabel('Album Interface', self)
+        # self.artistInterface = QLabel('Artist Interface', self)
 
-        # 添加标签页
-        self.addSubInterface(self.songInterface, 'songInterface', 'Song')
-        self.addSubInterface(self.albumInterface, 'albumInterface', 'Album')
-        self.addSubInterface(self.artistInterface, 'artistInterface', 'Artist')
-
-        # 连接信号并初始化当前标签页
-        self.stackedWidget.currentChanged.connect(self.onCurrentIndexChanged)
-        self.stackedWidget.setCurrentWidget(self.songInterface)
-        self.pivot.setCurrentItem(self.songInterface.objectName())
-
-        self.vBoxLayout.setContentsMargins(30, 0, 30, 30)
-        self.vBoxLayout.addWidget(self.pivot, 0, Qt.AlignHCenter)
+        # add items to pivot
+        self.addSubInterface(self.weatherInterface, 'weatherInterface', "7日天气")
+        # self.addSubInterface(self.albumInterface, 'albumInterface', self.tr('Album'))
+        self.vBoxLayout.addWidget(self.pivot, 0, Qt.AlignLeft)
         self.vBoxLayout.addWidget(self.stackedWidget)
-        self.resize(400, 400)
+        self.vBoxLayout.setContentsMargins(0, 0, 0, 0)
+        size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-    def addSubInterface(self, widget: QLabel, objectName: str, text: str):
+
+
+        self.stackedWidget.currentChanged.connect(self.onCurrentIndexChanged)
+        self.stackedWidget.setCurrentWidget(self.weatherInterface)
+        self.pivot.setCurrentItem(self.weatherInterface.objectName())
+
+        qrouter.setDefaultRouteKey(self.stackedWidget, self.weatherInterface.objectName())
+
+    def addSubInterface(self, widget: QFrame, objectName, text):
         widget.setObjectName(objectName)
-        widget.setAlignment(Qt.AlignCenter)
         self.stackedWidget.addWidget(widget)
-
-        # 使用全局唯一的 objectName 作为路由键
         self.pivot.addItem(
             routeKey=objectName,
             text=text,
@@ -55,12 +55,53 @@ class Weather(QWidget):
     def onCurrentIndexChanged(self, index):
         widget = self.stackedWidget.widget(index)
         self.pivot.setCurrentItem(widget.objectName())
+        qrouter.push(self.stackedWidget, widget.objectName())
 
 
-class Ui_Frame(object):
-    def setupUi(self, Frame):
-        if not Frame.objectName():
-            Frame.setObjectName(u"Frame")
+class Weather(__Weather):
+
+    Nav = SegmentedWidget
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.vBoxLayout.removeWidget(self.pivot)
+        self.vBoxLayout.insertWidget(0, self.pivot)
+        self.setObjectName("weatherInterface")
+
+
+class Weather7d(QFrame):
+    def __init__(self):
+        super(Weather7d, self).__init__()
+        self.setObjectName('Weather7d')
+        self.setup_ui(self)
+
+    def retranslate_ui(self, Frame):
+        Frame.setWindowTitle(QCoreApplication.translate("Frame", u"Frame", None))
+        self.Day4.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Desc4.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Date4.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+        self.Date7.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+        self.Desc7.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Day7.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Day2.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Desc2.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Date2.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+        self.Day5.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Desc5.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Date5.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+        self.Day6.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Desc6.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Date6.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+        self.ElevatedCardWidget.setToolTip("")
+        self.ElevatedCardWidget.setAccessibleDescription("")
+        self.Desc1.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Date1.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+        self.Day1.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Day3.setText(QCoreApplication.translate("Frame", u"Title label", None))
+        self.Desc3.setText(QCoreApplication.translate("Frame", u"Caption label", None))
+        self.Date3.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
+
+    def setup_ui(self, Frame):
         Frame.resize(735, 721)
         Frame.setFrameShape(QFrame.NoFrame)
         Frame.setFrameShadow(QFrame.Plain)
@@ -451,38 +492,7 @@ class Ui_Frame(object):
         self.gridLayout.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
 
 
-        self.retranslateUi(Frame)
+        self.retranslate_ui(Frame)
 
         QMetaObject.connectSlotsByName(Frame)
     # setupUi
-
-    def retranslateUi(self, Frame):
-        Frame.setWindowTitle(QCoreApplication.translate("Frame", u"Frame", None))
-        self.Day4.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Desc4.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Date4.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-        self.Date7.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-        self.Desc7.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Day7.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Day2.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Desc2.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Date2.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-        self.Day5.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Desc5.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Date5.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-        self.Day6.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Desc6.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Date6.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-#if QT_CONFIG(tooltip)
-        self.ElevatedCardWidget.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(accessibility)
-        self.ElevatedCardWidget.setAccessibleDescription("")
-#endif // QT_CONFIG(accessibility)
-        self.Desc1.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Date1.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-        self.Day1.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Day3.setText(QCoreApplication.translate("Frame", u"Title label", None))
-        self.Desc3.setText(QCoreApplication.translate("Frame", u"Caption label", None))
-        self.Date3.setText(QCoreApplication.translate("Frame", u"Subtitle label", None))
-    # retranslateUi

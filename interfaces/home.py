@@ -22,8 +22,6 @@ class Home(QFrame):
         self.timer.timeout.connect(self.update_datetime)
 
     def setup_ui(self, Frame):
-        if not Frame.objectName():
-            Frame.setObjectName(u"Frame")
         Frame.resize(741, 683)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
