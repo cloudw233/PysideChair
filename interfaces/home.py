@@ -13,8 +13,8 @@ from datetime import datetime
 
 
 class Home(QFrame):
-    def __init__(self):
-        super(Home, self).__init__()
+    def __init__(self, parent=None):
+        super(Home, self).__init__(parent=parent)
         self.setObjectName('Home')
         self.setup_ui(self)
         self.timer = QTimer()

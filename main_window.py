@@ -11,6 +11,8 @@ from qfluentwidgets import FluentIcon as FIF
 
 from interfaces.home import Home
 from interfaces.weather import Weather
+from interfaces.heart import HeartRate
+
 
 class Widget(QFrame):
 
@@ -31,15 +33,11 @@ class Window(FluentWindow):
         super().__init__()
 
         # create sub interface
-        self.homeInterface = Home() # 主界面
-        self.weatherInterface = Weather()
+        self.homeInterface = Home(self) # 主界面
+        self.weatherInterface = Weather(self)
+        self.heartRateInterface = HeartRate(self)
         self.videoInterface = Widget('Video Interface', self)
-        self.folderInterface = Widget('Folder Interface', self)
         self.settingInterface = Widget('Setting Interface', self)
-        self.albumInterface = Widget('Album Interface', self)
-        self.albumInterface1 = Widget('Album Interface 1', self)
-        self.albumInterface2 = Widget('Album Interface 2', self)
-        self.albumInterface1_1 = Widget('Album Interface 1-1', self)
 
         self.initNavigation()
         self.initWindow()
@@ -47,15 +45,10 @@ class Window(FluentWindow):
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, '主页')
         self.addSubInterface(self.weatherInterface, FIF.CLOUD, '天气')
-        self.addSubInterface(self.videoInterface, FIF.VIDEO, 'Video library')
+        self.addSubInterface(self.heartRateInterface, FIF.HEART, '心率')
+        self.addSubInterface(self.videoInterface, FIF.VIDEO, '康复视频')
 
         self.navigationInterface.addSeparator()
-
-        self.addSubInterface(self.albumInterface, FIF.ALBUM, 'Albums', NavigationItemPosition.SCROLL)
-        self.addSubInterface(self.albumInterface1, FIF.ALBUM, 'Album 1', parent=self.albumInterface)
-        self.addSubInterface(self.albumInterface1_1, FIF.ALBUM, 'Album 1.1', parent=self.albumInterface1)
-        self.addSubInterface(self.albumInterface2, FIF.ALBUM, 'Album 2', parent=self.albumInterface)
-        self.addSubInterface(self.folderInterface, FIF.FOLDER, 'Folder library', NavigationItemPosition.SCROLL)
 
         # add custom widget to bottom
         self.navigationInterface.addWidget(
