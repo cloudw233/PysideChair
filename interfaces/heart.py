@@ -1,15 +1,11 @@
-from qfluentwidgets import ScrollArea
+from PySide6.QtCore import Qt
 
 from components.cards.heart import HeartCard
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt, Slot)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QSizePolicy, QWidget, QFrame, QHBoxLayout)
+from PySide6.QtWidgets import (QFrame, QHBoxLayout)
+
+from components.cards.heart import HeartCard
+
 
 class HeartRate(QFrame):
 

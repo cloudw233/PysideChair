@@ -9,7 +9,9 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
                             InfoBadgePosition, FluentBackgroundTheme, TextBrowser)
 from qfluentwidgets import FluentIcon as FIF
 
+from interfaces.accounts.login import LoginI
 from interfaces.home import Home
+from interfaces.video import Video
 from interfaces.weather import Weather
 from interfaces.heart import HeartRate
 
@@ -36,14 +38,15 @@ class Window(FluentWindow):
         self.homeInterface = Home(self) # 主界面
         self.weatherInterface = Weather(self)
         self.heartRateInterface = HeartRate(self)
-        self.videoInterface = Widget('Video Interface', self)
+        self.videoInterface = Video(self)
+        self.accountInterface = LoginI(self)
         self.settingInterface = Widget('Setting Interface', self)
 
         self.initNavigation()
         self.initWindow()
 
     def initNavigation(self):
-        self.addSubInterface(self.homeInterface, FIF.HOME, '主页')
+        self.addSubInterface(self.homeInterface, QIcon("./assets/chair/"), '主页')
         self.addSubInterface(self.weatherInterface, FIF.CLOUD, '天气')
         self.addSubInterface(self.heartRateInterface, FIF.HEART, '心率')
         self.addSubInterface(self.videoInterface, FIF.VIDEO, '康复视频')
@@ -51,12 +54,14 @@ class Window(FluentWindow):
         self.navigationInterface.addSeparator()
 
         # add custom widget to bottom
-        self.navigationInterface.addWidget(
-            routeKey='avatar',
-            widget=NavigationAvatarWidget('zhiyiYo', 'resource/shoko.png'),
-            onClick=self.showMessageBox,
-            position=NavigationItemPosition.BOTTOM,
-        )
+        # self.navigationInterface.addWidget(
+        #     routeKey='avatar',
+        #     widget=NavigationAvatarWidget('zhiyiYo', 'resource/shoko.png'),
+        #     onClick=self.showMessageBox,
+        #     position=NavigationItemPosition.BOTTOM,
+        # )
+
+        self.addSubInterface(self.accountInterface, FIF.PEOPLE, '账号', NavigationItemPosition.BOTTOM)
 
         self.addSubInterface(self.settingInterface, FIF.SETTING, 'Settings', NavigationItemPosition.BOTTOM)
 
