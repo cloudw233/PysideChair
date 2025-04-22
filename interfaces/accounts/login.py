@@ -1,10 +1,13 @@
 from PIL.ImageQt import QPixmap
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
-                            QSize, Qt)
+                            QSize, Qt, Slot)
 from PySide6.QtWidgets import (QVBoxLayout, QWidget, QFrame, QHBoxLayout)
 
 from qfluentwidgets import (AvatarWidget, LineEdit, PasswordLineEdit, PrimaryPushButton, PushButton,
-                            SimpleCardWidget, SubtitleLabel)
+                            SimpleCardWidget, BodyLabel)
+
+from .register import RegisterCard
+
 
 class LoginCard(SimpleCardWidget):
     def __init__(self, parent=None):
@@ -21,7 +24,7 @@ class LoginCard(SimpleCardWidget):
         self.layoutWidget.setGeometry(QRect(100, 200, 421, 131))
         self.verticalLayout = QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.UsrnameXD = SubtitleLabel(self.layoutWidget)
+        self.UsrnameXD = BodyLabel(self.layoutWidget)
         self.UsrnameXD.setObjectName("UsrnameXD")
         self.UsrnameXD.setMaximumSize(QSize(16777215, 20))
 
@@ -32,7 +35,7 @@ class LoginCard(SimpleCardWidget):
 
         self.verticalLayout.addWidget(self.Username)
 
-        self.PasswordXD = SubtitleLabel(self.layoutWidget)
+        self.PasswordXD = BodyLabel(self.layoutWidget)
         self.PasswordXD.setObjectName("PasswordXD")
         self.PasswordXD.setMaximumSize(QSize(16777215, 20))
 
@@ -46,6 +49,7 @@ class LoginCard(SimpleCardWidget):
 
         self.retranslateUi()
 
+
         QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self):
@@ -54,7 +58,6 @@ class LoginCard(SimpleCardWidget):
         self.Register.setText(QCoreApplication.translate("self", "注册", None))
         self.UsrnameXD.setText(QCoreApplication.translate("self", "用户名", None))
         self.PasswordXD.setText(QCoreApplication.translate("self", "密码", None))
-
     
 class LoginI(QFrame):
 
@@ -62,5 +65,17 @@ class LoginI(QFrame):
         super(LoginI,self).__init__(parent=parent)
         self.setObjectName("loginInterface")
         self.hBoxLayout = QHBoxLayout(self)
-        self.card = LoginCard(self)
+        self.card = LoginCard()
+        self.r_card = RegisterCard()
         self.hBoxLayout.addWidget(self.card, Qt.AlignCenter)
+        self.card.Register.clicked.connect(self.on_register_clicked)
+
+    @Slot()
+    def on_register_clicked(self):
+        self.card.setVisible(False)
+        self.hBoxLayout.addWidget(self.r_card, Qt.AlignCenter)
+
+    @Slot()
+    def on_login_clicked(self):
+        # Perform login action here
+        pass
