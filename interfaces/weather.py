@@ -13,6 +13,8 @@ from assets.weather import weather_rc
 from components.cards.link import LinkCardView
 from components.cards.sample import SampleCardView
 
+from core.ws_connect import WebSocketClient
+
 qss = """
 SettingInterface,
 #view {
@@ -38,6 +40,7 @@ class Banner(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.client = WebSocketClient
         self.setFixedHeight(336)
         self.setObjectName("weatherInterface")
 

@@ -12,6 +12,10 @@ python = ">=3.10,<3.14"
 pyside6-fluent-widgets = {extras = ["full"], version = "^1.7.5"}
 azure-cognitiveservices-speech = "^1.42.0"
 qasync = "^0.27.1"
+apscheduler = "^3.11.0"
+websockets = "^15.0.1"
+orjson = "^3.10.16"
+tomlkit = "^0.13.2"
 
 
 [build-system]

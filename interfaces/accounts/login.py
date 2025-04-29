@@ -68,12 +68,20 @@ class LoginI(QFrame):
         self.card = LoginCard()
         self.r_card = RegisterCard()
         self.hBoxLayout.addWidget(self.card, Qt.AlignCenter)
+        self.hBoxLayout.addWidget(self.r_card, Qt.AlignCenter)
+        self.r_card.setVisible(False)
         self.card.Register.clicked.connect(self.on_register_clicked)
+        self.r_card.RegisterB.clicked.connect(self.on_register_button_clicked)
 
     @Slot()
     def on_register_clicked(self):
         self.card.setVisible(False)
-        self.hBoxLayout.addWidget(self.r_card, Qt.AlignCenter)
+        self.r_card.setVisible(True)
+
+    @Slot()
+    def on_register_button_clicked(self):
+        self.card.setVisible(True)
+        self.r_card.setVisible(False)
 
     @Slot()
     def on_login_clicked(self):
