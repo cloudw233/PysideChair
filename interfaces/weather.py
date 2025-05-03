@@ -4,6 +4,7 @@ from PySide6.QtGui import (QIcon, QLinearGradient, QColor, QBrush, QPainterPath,
 from PySide6.QtWidgets import (QFrame, QGridLayout, QLayout,
                                QSizePolicy, QVBoxLayout, QWidget, QStackedWidget,
                                QLabel)
+from qasync import asyncSlot
 
 from qfluentwidgets import (CaptionLabel, CardWidget, ElevatedCardWidget, IconWidget,
                             SmoothScrollArea, SubtitleLabel, TitleLabel,
@@ -12,8 +13,11 @@ from assets.chair import qtchair_rc
 from assets.weather import weather_rc
 from components.cards.link import LinkCardView
 from components.cards.sample import SampleCardView
+from core.builtins.elements import WeatherElements, WeatherInfoElements
+from core.builtins.message_constructors import MessageChainInstance
+from core.signals import Signals
+from core.utils import is_daytime
 
-from core.ws_connect import WebSocketClient
 
 qss = """
 SettingInterface,
@@ -35,12 +39,12 @@ BannerWidget > #galleryLabel {
 }
 """
 
+
 class Banner(QWidget):
     """ Banner widget """
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.client = WebSocketClient
         self.setFixedHeight(336)
         self.setObjectName("weatherInterface")
 
@@ -50,29 +54,23 @@ class Banner(QWidget):
         self.weather7dLabel = SubtitleLabel('七日天气', self)
         self.weather7dLabel.setObjectName('weather7d')
 
-
         self.vBoxLayout.setSpacing(0)
         self.vBoxLayout.setContentsMargins(36, 20, 0, 0)
         self.vBoxLayout.addWidget(self.weather7dLabel)
-        self.vBoxLayout.addWidget(self.linkCardView, 1, Qt.AlignBottom)
+        self.vBoxLayout.addWidget(self.linkCardView)
         self.vBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
-
+    @asyncSlot(MessageChainInstance)
+    async def setup(self, message: MessageChainInstance):
+        _message: WeatherInfoElements = [i for i in message.serialize() if i.Meta.type == 'WeatherInfoElement'][0]
         for icon, title, content, url, index in zip(
-            ["./assets/weather/100.svg"]*7,
-            ['Sunny', 'Cloudy', 'Rainy', 'Snowy', 'Windy', 'Foggy', 'Thunderstorm'],
-            ['Clear sky', 'Partly cloudy', 'Light rain', 'Heavy snow', 'Strong winds', 'Low visibility', 'Lightning storm'],
-            ['https://example.com/sunny',
-             'https://example.com/cloudy',
-             'https://example.com/rainy',
-             'https://example.com/snowy',
-             'https://example.com/windy',
-             'https://example.com/foggy',
-             'https://example.com/thunderstorm'],
-            [i for i in range(7)]
+                [f"./assets/weather/{_.get("iconDay") if is_daytime() else _.get("iconNight")}.svg" for _ in _message.daily],
+                [_.get("textDay") if is_daytime() else _.get("textNight") for _ in _message.daily],
+                [f"{_.get("tempMin")}℃-{_.get("tempMax")}℃" for _ in _message.daily],
+                ["https://www.qweather.com/"]*7,
+                [i for i in range(7)]
         ):
             self.linkCardView.addCard(icon, title, content, url)
-
 
     def paintEvent(self, e):
         super().paintEvent(e)
@@ -85,9 +83,9 @@ class Banner(QWidget):
         path.setFillRule(Qt.WindingFill)
         w, h = self.width(), self.height()
         path.addRoundedRect(QRectF(0, 0, w, h), 10, 10)
-        path.addRect(QRectF(0, h-50, 50, 50))
-        path.addRect(QRectF(w-50, 0, 50, 50))
-        path.addRect(QRectF(w-50, h-50, 50, 50))
+        path.addRect(QRectF(0, h - 50, 50, 50))
+        path.addRect(QRectF(w - 50, 0, 50, 50))
+        path.addRect(QRectF(w - 50, h - 50, 50, 50))
         path = path.simplified()
 
         # init linear gradient effect
@@ -104,15 +102,18 @@ class Banner(QWidget):
             self.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         painter.fillPath(path, QBrush(pixmap))
 
+
 class Weather(ScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.banner = Banner(self)
         self.view = QWidget(self)
         self.vBoxLayout = QVBoxLayout(self.view)
+        signals_ = Signals()
+        signals_.message_received.connect(self.loadSamples)
+        signals_.message_received.connect(self.banner.setup)
 
         self.__initWidget()
-        self.loadSamples()
 
     def __initWidget(self):
         self.view.setObjectName('view')
@@ -128,24 +129,20 @@ class Weather(ScrollArea):
         self.vBoxLayout.addWidget(self.banner)
         self.vBoxLayout.setAlignment(Qt.AlignTop)
 
-    def loadSamples(self):
+    @asyncSlot(MessageChainInstance)
+    async def loadSamples(self, message: MessageChainInstance):
         """ load samples """
         # basic input samples
         indicesView = SampleCardView(
             "天气指数", self.view)
+        _message: WeatherInfoElements = [i for i in message.serialize() if i.Meta.type == 'WeatherInfoElement'][0]
+        indices = _message.indices
         for icon, title, content, url, index in zip(
-                ["./assets/weather/100.svg"] * 7,
-                ['Sunny', 'Cloudy', 'Rainy', 'Snowy', 'Windy', 'Foggy', 'Thunderstorm'],
-                ['Clear sky', 'Partly cloudy', 'Light rain', 'Heavy snow', 'Strong winds', 'Low visibility',
-                 'Lightning storm'],
-                ['https://example.com/sunny',
-                 'https://example.com/cloudy',
-                 'https://example.com/rainy',
-                 'https://example.com/snowy',
-                 'https://example.com/windy',
-                 'https://example.com/foggy',
-                 'https://example.com/thunderstorm'],
-                [i for i in range(7)]
+                ["./assets/weather/qweather.svg"] * len(indices),
+                [_.get("name") for _ in indices],
+                [f"{_.get('level')} {_.get('text')}" for _ in indices],
+                ["https://www.qweather.com/"]* len(indices),
+                [i for i in range(len(indices))]
         ):
             indicesView.addSampleCard(icon, title, content, index, url)
         self.vBoxLayout.addWidget(indicesView)

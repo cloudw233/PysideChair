@@ -16,6 +16,9 @@ apscheduler = "^3.11.0"
 websockets = "^15.0.1"
 orjson = "^3.10.16"
 tomlkit = "^0.13.2"
+attrs = "^25.3.0"
+pydantic = "^2.11.4"
+astral = "^3.2"
 
 
 [build-system]

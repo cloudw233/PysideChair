@@ -1,20 +1,25 @@
 # coding:utf-8
+import asyncio
 import sys
 
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout
+from qasync import QEventLoop, QApplication
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, FluentWindow,
                             NavigationAvatarWidget, qrouter, SubtitleLabel, setFont, InfoBadge,
                             InfoBadgePosition, FluentBackgroundTheme, TextBrowser)
 from qfluentwidgets import FluentIcon as FIF
 
+from core.builtins.assigned_element import AccountElement, WeatherElement
+from core.builtins.message_constructors import MessageChain
 from interfaces.accounts import LoginI
 from interfaces.home import Home
 from interfaces.video import Video
 from interfaces.weather import Weather
 from interfaces.heart import HeartRate
 from interfaces.settings import SettingsCard
+from core.ws_connect import WebSocketClient
 
 
 class Widget(QFrame):
@@ -82,9 +87,34 @@ class Window(FluentWindow):
 
 
 if __name__ == '__main__':
-    # setTheme(Theme.DARK)
+    try:
+        app = QApplication(sys.argv)
+        loop = QEventLoop(app)
+        asyncio.set_event_loop(loop)
 
-    app = QApplication(sys.argv)
-    w = Window()
-    w.show()
-    app.exec()
+        client = WebSocketClient()
+
+        # 使用 loop.run_until_complete 替代 asyncio.run
+        loop.run_until_complete(client.connect_ws())
+
+        # 创建消息并发送
+        message = MessageChain([
+            AccountElement("cloudw233", "data"),
+            WeatherElement("Qufu"),
+        ])
+        loop.run_until_complete(client.send_message(message))
+
+        # 在后台启动接收消息的协程
+        asyncio.ensure_future(client.receive_messages(), loop=loop)
+
+        w = Window()
+        w.show()
+
+        # 运行事件循环
+        with loop:
+            loop.run_forever()
+
+    except KeyboardInterrupt:
+        w.close()
+        app.quit()
+        loop.run_until_complete(client.close())

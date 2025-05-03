@@ -1,10 +1,11 @@
+import attrs
 import orjson as json
 from typing import Literal, Union
 
 from core.pydantic_models import *
-from core.database.models import User
 from copy import deepcopy
 from attrs import define
+
 
 @define
 class AccountElements:
@@ -13,8 +14,8 @@ class AccountElements:
     """
     username: str
     action: Literal["login", "register", "data"]
-    password: Union[str, int] = None
-    face_recognition_data: str = None
+    password: Union[str, int] = 0
+    face_recognition_data: str = ' '
 
     class Meta:
         type = "AccountElement"
@@ -24,8 +25,8 @@ class AccountElements:
             cls,
             username: str,
             action: Literal["login", "register", "data"],
-            password: Union[str, int] = None,
-            face_recognition_data: str = None
+            password: Union[str, int] = 0,
+            face_recognition_data: str = ' '
     ):
         """
         账户元素
@@ -47,34 +48,12 @@ class AccountElements:
             password=model.password,
             face_recognition_data=model.face_recognition_data
         ))
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
 
-    async def verify(self):
-        """
-        验证账户
-        :return 布尔值
-        """
-        if self.action == "register":
-            user = User(
-                username=self.username,
-                password=self.password,
-                face_recognition_data=self.face_recognition_data
-            )
-            await user.save()
-            return True
-        elif self.action == "login":
-            user = await User.get(username=self.username)
-            if user:
-                if user.password == self.password:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        elif self.action == "data":
-            return True
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
 
 
 @define
@@ -88,7 +67,7 @@ class SensorElements:
     urgent_button: bool = None
     tilt: bool = None
     heart_data: int = None
-    smoke: dict = None
+    smoke: Smoke = None
     seat: int = None
 
     class Meta:
@@ -103,7 +82,7 @@ class SensorElements:
             urgent_button: bool = None,
             tilt: bool = None,
             heart_data: int = None,
-            smoke: dict = None,
+            smoke: Smoke = None,
             seat: int = None
     ):
         """
@@ -139,9 +118,11 @@ class SensorElements:
             seat=model.seat
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
 
 
 @define
@@ -169,9 +150,12 @@ class WeatherElements:
             city=model.city
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
+
 
 @define
 class WeatherInfoElements:
@@ -225,9 +209,11 @@ class WeatherInfoElements:
             lon=model.lon
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
 
 
 @define
@@ -255,9 +241,12 @@ class UIElements:
             seat=model.seat
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
+
 
 @define
 class HeartElements:
@@ -284,9 +273,12 @@ class HeartElements:
             bpm=model.bpm
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
+
 
 @define
 class DeepSeekElements:
@@ -313,9 +305,12 @@ class DeepSeekElements:
             question=model.question
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
+
 
 @define
 class DeepSeekAnswerElements:
@@ -346,9 +341,12 @@ class DeepSeekAnswerElements:
             answer=model.answer
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
+
 
 @define
 class ResponseElements:
@@ -370,7 +368,7 @@ class ResponseElements:
     @classmethod
     def assign(
             cls,
-            ret_code: Literal[0,1,2],
+            ret_code: Literal[0, 1, 2],
             msg: str = None
     ):
         """
@@ -384,9 +382,12 @@ class ResponseElements:
             msg=f"[{cls.mapping[ret_code]}] {msg}"
         ))
 
-    @classmethod
-    def dump(cls):
-        return str(json.dumps(cls.__dict__))
+    def dump(self):
+        return {
+            field.name: getattr(self, field.name)
+            for field in attrs.fields(self.__class__)
+        }
+
 
 __all__ = [
     'AccountElements',
