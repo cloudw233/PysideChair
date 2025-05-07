@@ -322,37 +322,40 @@ class ResponseElements(BaseElements):
     响应元素
     """
     ret_code: int
-    msg: str
+    message: str
+    flag: str = None
 
     class Meta:
         type = "ResponseElement"
-        flag = None
 
     mapping = {
         0: "Success",
         1: "Warning",
         2: "Error",
     }
+    @property
+    def msg(self):
+        return f"[{self.mapping[self.ret_code]}] {self.message}"
 
     @classmethod
     def assign(
             cls,
             ret_code: Literal[0, 1, 2],
-            msg: str = None,
+            message: str = None,
             flag: str = None
     ):
         """
         响应元素
         :param ret_code: 返回码，0:成功，1:警告，2:错误
-        :param msg: 消息
+        :param message: 消息
         :param flag: 标志
         :return:
         """
         tempcls = deepcopy(cls(
             ret_code=ret_code,
-            msg=f"[{cls.mapping[ret_code]}] {msg}"
+            message=message,
+            flag=flag
         ))
-        tempcls.Meta.flag = flag
         return tempcls
 
 

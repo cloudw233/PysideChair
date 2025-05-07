@@ -9,8 +9,10 @@ class BaseModel(PydanticBaseModel):
 class Account(BaseModel):
     username: str
     action: Literal["login", "register", "data"]
-    password: Union[str, int] = 0
-    face_recognition_data: str = " "
+    password: Union[str, int] = None
+    device_id: str = ' '
+    key: str = ' '
+    face_recognition_data: str = None
 
 class Smoke(TypedDict):
     MQ_2: bool

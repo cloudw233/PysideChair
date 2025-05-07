@@ -5,14 +5,18 @@ import sys
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout
-from qasync import QEventLoop, QApplication
+from qasync import QEventLoop, QApplication, asyncSlot
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, FluentWindow,
                             NavigationAvatarWidget, qrouter, SubtitleLabel, setFont, InfoBadge,
                             InfoBadgePosition, FluentBackgroundTheme, TextBrowser)
 from qfluentwidgets import FluentIcon as FIF
+from loguru import logger
 
+from config import config
 from core.builtins.assigned_element import AccountElement, WeatherElement
-from core.builtins.message_constructors import MessageChain
+from core.builtins.message_constructors import MessageChain, MessageChainInstance
+from core.security import get_computer_id
+from core.signals import Signals
 from interfaces.accounts import LoginI
 from interfaces.home import Home
 from interfaces.video import Video
@@ -20,6 +24,19 @@ from interfaces.weather import Weather
 from interfaces.heart import HeartRate
 from interfaces.settings import SettingsCard
 from core.ws_connect import WebSocketClient
+
+ascii_art = """
+
+
+  _   _                  _   _     _        ____                          ____   _               _        
+ | | | |   ___    __ _  | | | |_  | |__    / ___|   __ _   _ __    ___   / ___| | |__     __ _  (_)  _ __ 
+ | |_| |  / _ \  / _` | | | | __| | '_ \  | |      / _` | | '__|  / _ \ | |     | '_ \   / _` | | | | '__|
+ |  _  | |  __/ | (_| | | | | |_  | | | | | |___  | (_| | | |    |  __/ | |___  | | | | | (_| | | | | |   
+ |_| |_|  \___|  \__,_| |_|  \__| |_| |_|  \____|  \__,_| |_|     \___|  \____| |_| |_|  \__,_| |_| |_|   
+                                                                                                          
+
+
+"""
 
 
 class Widget(QFrame):
@@ -88,29 +105,28 @@ class Window(FluentWindow):
 
 if __name__ == '__main__':
     try:
+        logger.info(ascii_art)
+        logger.info("Here we go!")
         app = QApplication(sys.argv)
         loop = QEventLoop(app)
         asyncio.set_event_loop(loop)
 
         client = WebSocketClient()
+        signals = Signals()
 
-        # 使用 loop.run_until_complete 替代 asyncio.run
-        loop.run_until_complete(client.connect_ws())
+        # 只启动连接，receive_messages会在连接成功后自动启动
+        asyncio.ensure_future(client.connect_ws(), loop=loop)
 
-        # 创建消息并发送
-        message = MessageChain([
-            AccountElement("cloudw233", "data"),
-            WeatherElement("Qufu"),
-        ])
-        loop.run_until_complete(client.send_message(message))
 
-        # 在后台启动接收消息的协程
-        asyncio.ensure_future(client.receive_messages(), loop=loop)
+        @asyncSlot(MessageChainInstance)
+        async def send_msg(msg: MessageChainInstance):
+            await client.send_message(msg)
 
+
+        signals.message_sent.connect(send_msg)
         w = Window()
         w.show()
 
-        # 运行事件循环
         with loop:
             loop.run_forever()
 

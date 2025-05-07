@@ -15,7 +15,16 @@ class MessageChainInstance:
         self.serialized = False
         return self.messages
 
-    def serialize(self):
+    def serialize(self) -> list[Union[
+                   AccountElement,
+                   SensorElement,
+                   WeatherElement,
+                   WeatherInfoElement,
+                   UIElement,
+                   HeartElement,
+                   DeepSeekElement,
+                   DeepSeekAnswerElement,
+                   ResponseElement]]:
         if self.serialized:
             return self.messages
         msg_chain_lst = []

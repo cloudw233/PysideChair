@@ -1,25 +1,17 @@
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient)
+from PySide6.QtCore import QCoreApplication, QMetaObject, Qt
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (QApplication, QSizePolicy, QVBoxLayout, QWidget)
 
 from qfluentwidgets import (CardWidget, IconWidget, PrimaryPushButton, PushButton,
     SimpleCardWidget, SubtitleLabel)
 
-class LoggedIn(SimpleCardWidget):
+class LoggedIn(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.resize(641, 645)
-        self.widget = QWidget(self)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(70, 90, 491, 301))
-        self.verticalLayout = QVBoxLayout(self.widget)
+        self.setObjectName("LoggedInCard")
+        self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.IconWidget = IconWidget(self.widget)
+        self.IconWidget = IconWidget(self)
         self.IconWidget.setObjectName(u"IconWidget")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -31,7 +23,7 @@ class LoggedIn(SimpleCardWidget):
 
         self.verticalLayout.addWidget(self.IconWidget)
 
-        self.UsernameShow = SubtitleLabel(self.widget)
+        self.UsernameShow = SubtitleLabel(self)
         self.UsernameShow.setObjectName(u"UsernameShow")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
@@ -42,7 +34,7 @@ class LoggedIn(SimpleCardWidget):
 
         self.verticalLayout.addWidget(self.UsernameShow)
 
-        self.Exit = PrimaryPushButton(self.widget)
+        self.Exit = PrimaryPushButton(self)
         self.Exit.setObjectName(u"Exit")
         sizePolicy2 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy2.setHorizontalStretch(0)

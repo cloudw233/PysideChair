@@ -20,6 +20,7 @@ attrs = "^25.3.0"
 pydantic = "^2.11.4"
 astral = "^3.2"
 wmi = "^1.5.1"
+loguru = "^0.7.3"
 
 
 [build-system]

@@ -62,7 +62,10 @@ class Banner(QWidget):
 
     @asyncSlot(MessageChainInstance)
     async def setup(self, message: MessageChainInstance):
-        _message: WeatherInfoElements = [i for i in message.serialize() if i.Meta.type == 'WeatherInfoElement'][0]
+        _message = [i for i in message.serialize() if i.Meta.type == 'WeatherInfoElement']
+        if len(_message) == 0:
+            return
+        _message = _message[0]
         for icon, title, content, url, index in zip(
                 [f"./assets/weather/{_.get("iconDay") if is_daytime() else _.get("iconNight")}.svg" for _ in _message.daily],
                 [_.get("textDay") if is_daytime() else _.get("textNight") for _ in _message.daily],
@@ -135,7 +138,10 @@ class Weather(ScrollArea):
         # basic input samples
         indicesView = SampleCardView(
             "天气指数", self.view)
-        _message: WeatherInfoElements = [i for i in message.serialize() if i.Meta.type == 'WeatherInfoElement'][0]
+        _message = [i for i in message.serialize() if i.Meta.type == 'WeatherInfoElement']
+        if len(_message) == 0:
+            return
+        _message = _message[0]
         indices = _message.indices
         for icon, title, content, url, index in zip(
                 ["./assets/weather/qweather.svg"] * len(indices),
