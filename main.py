@@ -12,7 +12,7 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
 from qfluentwidgets import FluentIcon as FIF
 from loguru import logger
 
-from config import config
+from config import init_config
 from core.builtins.assigned_element import AccountElement, WeatherElement
 from core.builtins.message_constructors import MessageChain, MessageChainInstance
 from core.security import get_computer_id
@@ -25,18 +25,16 @@ from interfaces.heart import HeartRate
 from interfaces.settings import SettingsCard
 from core.ws_connect import WebSocketClient
 
-ascii_art = """
+init_config()
 
-
+ascii_art = r'''
   _   _                  _   _     _        ____                          ____   _               _        
  | | | |   ___    __ _  | | | |_  | |__    / ___|   __ _   _ __    ___   / ___| | |__     __ _  (_)  _ __ 
  | |_| |  / _ \  / _` | | | | __| | '_ \  | |      / _` | | '__|  / _ \ | |     | '_ \   / _` | | | | '__|
  |  _  | |  __/ | (_| | | | | |_  | | | | | |___  | (_| | | |    |  __/ | |___  | | | | | (_| | | | | |   
  |_| |_|  \___|  \__,_| |_|  \__| |_| |_|  \____|  \__,_| |_|     \___|  \____| |_| |_|  \__,_| |_| |_|   
                                                                                                           
-
-
-"""
+                                                                                                          '''
 
 
 class Widget(QFrame):

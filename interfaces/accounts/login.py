@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QWidget, QFrame, QHBoxLayout)
 from qfluentwidgets import (AvatarWidget, LineEdit, PasswordLineEdit, PrimaryPushButton, PushButton,
                             SimpleCardWidget, BodyLabel, InfoBar, InfoBarPosition)
 
+from config import set_config
 from core.builtins.assigned_element import AccountElement
 from core.builtins.elements import AccountElements, ResponseElements
 from core.builtins.message_constructors import MessageChain, MessageChainInstance
@@ -138,7 +139,7 @@ class LoginI(QFrame):
             ret_code = status.ret_code
             if status.flag == "login":
                 if ret_code == 0:
-                    logger.info("Login successfully "+status.msg)
+                    logger.info(status.msg)
                     self.card.setVisible(False)
                     self.l_card.setVisible(True)
                     InfoBar.success(
@@ -150,8 +151,11 @@ class LoginI(QFrame):
                         duration=-1,
                         parent=self.l_card,
                     )
+                    set_config('username', self.card.Username.text())
+                    set_config('password', self.card.Password.text())
+                    set_config("logged_in", True)
                 else:
-                    logger.error("Login failed "+status.msg)
+                    logger.error(status.msg)
                     InfoBar.error(
                         title='错误',
                         content="登录失败"+status.msg,

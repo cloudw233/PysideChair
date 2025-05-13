@@ -30,7 +30,9 @@ class Sensor(BaseModel):
     tilt: bool = None
     heart_data: int = None
     smoke: Smoke = None
-    seat: int = None
+    seat: float = None
+    lat: str = None
+    lon: str = None
 
 
 class Weather(BaseModel):

@@ -1,9 +1,10 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
-                            QSize, Qt, QRectF)
+                            QSize, Qt, QRectF, Slot)
 from PySide6.QtGui import (QIcon, QLinearGradient, QColor, QBrush, QPainterPath, QPainter, QPixmap)
 from PySide6.QtWidgets import (QFrame, QGridLayout, QLayout,
                                QSizePolicy, QVBoxLayout, QWidget, QStackedWidget,
                                QLabel)
+from apscheduler.schedulers.qt import QTimer
 from qasync import asyncSlot
 
 from qfluentwidgets import (CaptionLabel, CardWidget, ElevatedCardWidget, IconWidget,
@@ -13,8 +14,11 @@ from assets.chair import qtchair_rc
 from assets.weather import weather_rc
 from components.cards.link import LinkCardView
 from components.cards.sample import SampleCardView
+from config import config
+from core.builtins.assigned_element import AccountElement
 from core.builtins.elements import WeatherElements, WeatherInfoElements
-from core.builtins.message_constructors import MessageChainInstance
+from core.builtins.message_constructors import MessageChainInstance, MessageChain
+from core.security import get_computer_id
 from core.signals import Signals
 from core.utils import is_daytime
 
@@ -59,6 +63,7 @@ class Banner(QWidget):
         self.vBoxLayout.addWidget(self.weather7dLabel)
         self.vBoxLayout.addWidget(self.linkCardView)
         self.vBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
 
     @asyncSlot(MessageChainInstance)
     async def setup(self, message: MessageChainInstance):
@@ -112,9 +117,13 @@ class Weather(ScrollArea):
         self.banner = Banner(self)
         self.view = QWidget(self)
         self.vBoxLayout = QVBoxLayout(self.view)
-        signals_ = Signals()
-        signals_.message_received.connect(self.loadSamples)
-        signals_.message_received.connect(self.banner.setup)
+        self.signals_ = Signals()
+        self.signals_.message_received.connect(self.loadSamples)
+        self.signals_.message_received.connect(self.banner.setup)
+        self.timer = QTimer(self)
+        self.timer.start(100)
+
+        self.timer.timeout.connect(self.first_request)
 
         self.__initWidget()
 
@@ -131,6 +140,27 @@ class Weather(ScrollArea):
         self.vBoxLayout.setSpacing(40)
         self.vBoxLayout.addWidget(self.banner)
         self.vBoxLayout.setAlignment(Qt.AlignTop)
+
+    @Slot()
+    def first_request(self):
+        if bool(config("logged_in")):
+            self.timer.stop()
+            self.timer.timeout.disconnect(self.first_request)
+            self.timer.deleteLater()
+            self.signals_.message_sent.emit(
+                MessageChain(
+                    [
+                        AccountElement(
+                        config("username"),
+                        'data',
+                        config("password"),
+                        get_computer_id(),
+                    ),
+                        WeatherElements(
+                            config("city"),
+                        )]
+                )
+            )
 
     @asyncSlot(MessageChainInstance)
     async def loadSamples(self, message: MessageChainInstance):

@@ -79,6 +79,8 @@ class SensorElements(BaseElements):
     heart_data: int = None
     smoke: Smoke = None
     seat: int = None
+    lat: str = None
+    lon: str = None
 
     class Meta:
         type = "SensorElement"
@@ -93,7 +95,9 @@ class SensorElements(BaseElements):
             tilt: bool = None,
             heart_data: int = None,
             smoke: Smoke = None,
-            seat: int = None
+            seat: float = None,
+            lat: str = None,
+            lon: str = None
     ):
         """
         传感器元素
@@ -105,6 +109,8 @@ class SensorElements(BaseElements):
         :param heart_data: 心率数据
         :param smoke: 烟雾数据
         :param seat: 座位角度
+        :param lat: 纬度
+        :param lon: 经度
         :return:
         """
         model = Sensor(
@@ -115,7 +121,9 @@ class SensorElements(BaseElements):
             tilt=tilt,
             heart_data=heart_data,
             smoke=smoke,
-            seat=seat
+            seat=seat,
+            lat=lat,
+            lon=lon
         )
         return deepcopy(cls(
             temp=model.temp,
@@ -317,6 +325,26 @@ class DeepSeekAnswerElements(BaseElements):
 
 
 @define
+class MachineryElements(BaseElements):
+    speed: float = 0.5
+    direction: Literal['F','B','L','R'] = 'F'
+
+    class Meta:
+        type = "MachineryElement"
+
+    @classmethod
+    def assign(
+            cls,
+            speed: float = 0.5,
+            direction: Literal['F','B','L','R'] = 'F'
+    ):
+        return deepcopy(cls(
+            speed=speed,
+            direction=direction
+        ))
+
+
+@define
 class ResponseElements(BaseElements):
     """
     响应元素
@@ -368,5 +396,6 @@ __all__ = [
     'HeartElements',
     'DeepSeekElements',
     'DeepSeekAnswerElements',
+    'MachineryElements',
     'ResponseElements'
 ]

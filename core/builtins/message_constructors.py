@@ -1,11 +1,11 @@
 from copy import deepcopy
-from typing import Union
-
+from typing import Union, Literal, List
 from .assigned_element import *
+from ..pydantic_models import Indices, WeatherDaily
 
 
 class MessageChainInstance:
-    messages = None
+    messages: list = None
     serialized: bool = None
 
     def deserialize(self):
@@ -15,16 +15,7 @@ class MessageChainInstance:
         self.serialized = False
         return self.messages
 
-    def serialize(self) -> list[Union[
-                   AccountElement,
-                   SensorElement,
-                   WeatherElement,
-                   WeatherInfoElement,
-                   UIElement,
-                   HeartElement,
-                   DeepSeekElement,
-                   DeepSeekAnswerElement,
-                   ResponseElement]]:
+    def serialize(self):
         if self.serialized:
             return self.messages
         msg_chain_lst = []
@@ -48,6 +39,8 @@ class MessageChainInstance:
                     msg_chain_lst.append(DeepSeekElement(**data))
                 case "DeepSeekAnswerElement":
                     msg_chain_lst.append(DeepSeekAnswerElement(**data))
+                case "MachineryElement":
+                    msg_chain_lst.append(MachineryElement(**data))
                 case "ResponseElement":
                     msg_chain_lst.append(ResponseElement(**data))
                 case _:
@@ -58,7 +51,7 @@ class MessageChainInstance:
 
     @classmethod
     def assign(cls,
-               elements: list[Union[
+               elements: List[
                    AccountElement,
                    SensorElement,
                    WeatherElement,
@@ -67,18 +60,20 @@ class MessageChainInstance:
                    HeartElement,
                    DeepSeekElement,
                    DeepSeekAnswerElement,
-                   ResponseElement]]) -> "MessageChain":
+                   MachineryElement,
+                   ResponseElement]) -> "MessageChain":
         cls.serialized = True
         cls.messages = elements
         return deepcopy(cls())
 
     @classmethod
-    def assign_deserialized(cls, elements: list[dict]) -> "MessageChain":
+    def assign_deserialized(cls, elements: list[dict]) -> "MessageChainD":
         cls.serialized = False
         cls.messages = elements
         return deepcopy(cls())
 
+
 MessageChain = MessageChainInstance.assign
 MessageChainD = MessageChainInstance.assign_deserialized
 
-__all__ = ["MessageChain", "MessageChainD"]
+__all__ = ["MessageChain", "MessageChainD", "process_message"]

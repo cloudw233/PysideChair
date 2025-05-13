@@ -33,18 +33,11 @@ class HeartCard(ElevatedCardWidget):
         self.IndeterminateProgressRing.setGeometry(QRect(320, 180, 41, 41))
         self.IndeterminateProgressRing.setMinimumSize(QSize(0, 0))
 
-        self.retranslateUi(self)
-        self.StartRecording.released.connect(self.on_StartRecording_released)
+        self.retranslateUi()
 
-        QMetaObject.connectSlotsByName(self)
-    # setupUi
+    def retranslateUi(self):
+        self.StartRecording.setText(QCoreApplication.translate("Form", "开始测量", None))
+        self.LargeTitleLabel.setText(QCoreApplication.translate("Form", "心率 - NaN次/分", None))
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.StartRecording.setText(QCoreApplication.translate("Form", u"\u5f00\u59cb\u6d4b\u91cf", None))
-        self.LargeTitleLabel.setText(QCoreApplication.translate("Form", u"\u5fc3\u7387 - NaN\u6b21/\u5206", None))
-
-    @Slot()
-    def on_StartRecording_released(self):
-        self.IndeterminateProgressRing.start()
-        self.StartRecording.setEnabled(False)
+    def update_heart_rate(self, message):
+        pass

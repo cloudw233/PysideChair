@@ -30,6 +30,7 @@ class WebSocketClient(QObject):
         while True:
             try:
                 if not self.websocket or not self.running:
+                    self.url = config("ws_server")
                     self.websocket = await websockets.connect(self.url)
                     self.running = True
                     self._reconnect_delay = 1  # 连接成功后重置重连延迟

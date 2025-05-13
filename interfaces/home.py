@@ -1,5 +1,5 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject, QRect,
-                            QSize, Qt, QTimer)
+                            QSize, Qt, QTimer, Slot)
 from PySide6.QtGui import (QIcon)
 from PySide6.QtWidgets import (QFrame, QGridLayout, QSizePolicy,
                                QSlider, QWidget, QHBoxLayout, QVBoxLayout)
@@ -11,26 +11,29 @@ from assets.chair import qtchair_rc
 
 from datetime import datetime
 
+from core.builtins.assigned_element import SensorElements
+from core.builtins.message_constructors import MessageChain, MessageChainInstance
+from core.signals import Signals
+
 
 class Home(QFrame):
     def __init__(self, parent=None):
         super(Home, self).__init__(parent=parent)
         self.setObjectName('Home')
-        self.setup_ui(self)
+        self.signals = Signals()
         self.timer = QTimer()
         self.timer.start(100)
         self.timer.timeout.connect(self.update_datetime)
-
-    def setup_ui(self, Frame):
-        Frame.resize(741, 683)
+        self.signals.message_received.connect(self.sync_info)
+        self.resize(741, 683)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(Frame.sizePolicy().hasHeightForWidth())
-        Frame.setSizePolicy(sizePolicy)
-        self.horizontalLayout = QHBoxLayout(Frame)
+        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(sizePolicy)
+        self.horizontalLayout = QHBoxLayout(self)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.ScrollArea = ScrollArea(Frame)
+        self.ScrollArea = ScrollArea(self)
         self.ScrollArea.setObjectName(u"ScrollArea")
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
@@ -185,21 +188,19 @@ class Home(QFrame):
         icon7 = QIcon()
         icon7.addFile(u":/\u65b0\u524d\u7f00/\u7535\u91cf.png", QSize(), QIcon.Normal, QIcon.Off)
         self.IconWidget_8.setIcon(icon7)
-        self.Battery = ProgressBar(self.ElevatedCardWidget_6)
+        self.Battery = ProgressBar(self.ElevatedCardWidget_6, useAni=False)
         self.Battery.setObjectName(u"Battery")
         self.Battery.setGeometry(QRect(120, 60, 451, 8))
+        self.Battery.setRange(0, 100)
+        self.Battery.setMinimumSize(QSize(0, 8))
+        self.Battery.setVal(30)
+        self.BatteryVal = BodyLabel(self.ElevatedCardWidget_6)
+        self.BatteryVal.setObjectName(u"BatteryVal")
+        self.BatteryVal.setGeometry(QRect(190, 30, 21, 19))
         sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.Battery.sizePolicy().hasHeightForWidth())
-        self.Battery.setSizePolicy(sizePolicy4)
-        self.Battery.setMinimumSize(QSize(0, 8))
-        self.Battery.setVal(0.000000000000000)
-        self.BatteryVal = BodyLabel(self.ElevatedCardWidget_6)
-        self.BatteryVal.setObjectName(u"BatteryVal")
-        self.BatteryVal.setGeometry(QRect(190, 30, 21, 19))
-        self.BatteryVal.setFrameShape(QFrame.NoFrame)
-        self.BatteryVal.setFrameShadow(QFrame.Plain)
         self.BodyLabel_2 = BodyLabel(self.ElevatedCardWidget_6)
         self.BodyLabel_2.setObjectName(u"BodyLabel_2")
         self.BodyLabel_2.setGeometry(QRect(220, 30, 65, 19))
@@ -217,30 +218,39 @@ class Home(QFrame):
         self.horizontalLayout.addWidget(self.ScrollArea)
 
 
-        self.retranslate_ui(Frame)
+        self.retranslate_ui()
 
-        QMetaObject.connectSlotsByName(Frame)
+    def retranslate_ui(self):
+        self.SubtitleLabel_3.setText("时间")
+        self.TimeDate.setText(datetime.now().strftime("%Y年 %m月 %d日"))
+        self.Time.setText(datetime.now().strftime("%H:%M:%S"))
+        self.TitleLabel.setText("健康守望者  智能颐养椅")
+        self.SubtitleLabel.setText("轮椅序列号： 00001")
+        self.SubtitleLabel_2.setText("用户信息")
+        self.StrongBodyLabel.setText("用户名")
+        self.Username.setText("None")
+        self.DhtText.setText("温度                    湿度")
+        self.Temperature.setText("20℃")
+        self.Humidity.setText("20%")
+        self.SubtitleLabel_5.setText("GPS")
+        self.GPS.setText("35.59, 116.95")
+        self.SubtitleLabel_4.setText("座椅")
+        self.BatteryVal.setText("30")
+        self.BodyLabel_2.setText("%")
+        self.BodyLabel_3.setText("电源电量")
 
-    def retranslate_ui(self, Frame):
-        Frame.setWindowTitle(QCoreApplication.translate("Frame", u"Frame", None))
-        self.SubtitleLabel_3.setText(QCoreApplication.translate("Frame", "时间", None))
-        self.TimeDate.setText(QCoreApplication.translate("Frame", datetime.now().strftime("%Y年 %m月 %d日"), None))
-        self.Time.setText(QCoreApplication.translate("Frame", datetime.now().strftime("%H:%M:%S"), None))
-        self.TitleLabel.setText(QCoreApplication.translate("Frame", "健康守望者  智能颐养椅", None))
-        self.SubtitleLabel.setText(QCoreApplication.translate("Frame", "轮椅序列号： 00001", None))
-        self.SubtitleLabel_2.setText(QCoreApplication.translate("Frame", "用户信息", None))
-        self.StrongBodyLabel.setText(QCoreApplication.translate("Frame", "用户名", None))
-        self.Username.setText(QCoreApplication.translate("Frame", "None", None))
-        self.DhtText.setText(QCoreApplication.translate("Frame", "温度                    湿度", None))
-        self.Temperature.setText(QCoreApplication.translate("Frame", "20℃", None))
-        self.Humidity.setText(QCoreApplication.translate("Frame", "20%", None))
-        self.SubtitleLabel_5.setText(QCoreApplication.translate("Frame", "GPS", None))
-        self.GPS.setText(QCoreApplication.translate("Frame", "35.59, 116.95", None))
-        self.SubtitleLabel_4.setText(QCoreApplication.translate("Frame", "座椅", None))
-        self.BatteryVal.setText(QCoreApplication.translate("Frame", "30", None))
-        self.BodyLabel_2.setText(QCoreApplication.translate("Frame", "%", None))
-        self.BodyLabel_3.setText(QCoreApplication.translate("Frame", "电源电量", None))
+    @Slot(MessageChainInstance)
+    def sync_info(self, msg: MessageChainInstance):
+        msg.serialize()
+        sensor = [_ for _ in msg.messages if isinstance(_, SensorElements)]
+        if len(sensor) > 0:
+            sensor = sensor[0]
+            self.Temperature.setText(f"{sensor.temp}℃")
+            self.Humidity.setText(f"{sensor.humidity}%")
+            self.GPS.setText(f"{sensor.lon}, {sensor.lat}")
+            self.BatteryVal.setText(f"{sensor.power}")
+            self.Battery.setVal(sensor.power)
 
     def update_datetime(self):
-        self.TimeDate.setText(QCoreApplication.translate("Frame", datetime.now().strftime("%Y年 %m月 %d日"), None))
-        self.Time.setText(QCoreApplication.translate("Frame", datetime.now().strftime("%H:%M:%S"), None))
+        self.TimeDate.setText(datetime.now().strftime("%Y年 %m月 %d日"))
+        self.Time.setText(datetime.now().strftime("%H:%M:%S"))

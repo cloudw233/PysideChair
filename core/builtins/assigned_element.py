@@ -8,6 +8,7 @@ UIElement = UIElements.assign
 HeartElement = HeartElements.assign
 DeepSeekElement = DeepSeekElements.assign
 DeepSeekAnswerElement = DeepSeekAnswerElements.assign
+MachineryElement = MachineryElements.assign
 ResponseElement = ResponseElements.assign
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     'HeartElement',
     'DeepSeekElement',
     'DeepSeekAnswerElement',
+    'MachineryElement',
     'ResponseElement'
 ]

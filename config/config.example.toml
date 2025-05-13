@@ -1,2 +1,6 @@
 ws_server = ""
+city = ""
+username = ""
 password = ""
+logged_in = false
+

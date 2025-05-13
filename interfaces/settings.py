@@ -1,7 +1,10 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import QHBoxLayout
+from loguru import logger
 from qfluentwidgets import GroupHeaderCardWidget, PushButton, IconWidget, InfoBarIcon, \
-    BodyLabel, PrimaryPushButton, FluentIcon, LineEdit
+    BodyLabel, PrimaryPushButton, FluentIcon, LineEdit, InfoBar, InfoBarPosition
+
+from config import set_config, config
 
 
 class SettingsCard(GroupHeaderCardWidget):
@@ -14,6 +17,8 @@ class SettingsCard(GroupHeaderCardWidget):
 
         self.lineEdit = LineEdit(self)
         self.lineEdit2 = LineEdit(self)
+        self.lineEdit.setText(config("city"))
+        self.lineEdit2.setText(config("ws_server"))
 
         self.hintIcon = IconWidget(InfoBarIcon.INFORMATION)
         self.hintLabel = BodyLabel("点击保存👉")
@@ -24,7 +29,7 @@ class SettingsCard(GroupHeaderCardWidget):
         self.lineEdit.setFixedWidth(320)
         self.lineEdit2.setFixedWidth(320)
         self.lineEdit.setPlaceholderText("城市名，支持中文和英文")
-        self.lineEdit2.setPlaceholderText("ws://example.com:port/client")
+        self.lineEdit2.setPlaceholderText("ws://<example.com>:<port>/client")
 
         # 设置底部工具栏布局
         self.hintIcon.setFixedSize(16, 16)
@@ -44,3 +49,23 @@ class SettingsCard(GroupHeaderCardWidget):
 
         # 添加底部工具栏
         self.vBoxLayout.addLayout(self.bottomLayout)
+
+        # 连接信号
+        self.saveButton.clicked.connect(self.save_config)
+
+    @Slot()
+    def save_config(self):
+        city = self.lineEdit.text()
+        ws_server = self.lineEdit2.text()
+        set_config("city",city)
+        set_config("ws_server", ws_server)
+        InfoBar.success(
+            "成功",
+            "配置保存成功",
+            orient=Qt.Vertical,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            duration=-1,
+            parent=self
+        )
+        logger.success("配置保存成功")
