@@ -16,23 +16,21 @@ class Account(BaseModel):
 
 class Smoke(TypedDict):
     MQ_2: bool
-    MQ_4: bool
-    MQ_5: bool
+    MQ_4: bool|None
+    MQ_5: bool|None
     MQ_7: bool
-    MQ_9: bool
-    MQ_135: bool
+    MQ_9: bool|None
+    MQ_135: bool|None
 
 class Sensor(BaseModel):
-    temp: float = None
-    humidity: float = None
-    power: float = None
-    urgent_button: bool = None
-    tilt: bool = None
-    heart_data: int = None
-    smoke: Smoke = None
-    seat: float = None
-    lat: str = None
-    lon: str = None
+    temp: float|None = None
+    humidity: float|None = None
+    power: float|None = None
+    urgent_button: bool|None = None
+    tilt: bool|None = None
+    heart_data: int|None = None
+    smoke: Smoke|dict = {}
+    seat: int|None = None
 
 
 class Weather(BaseModel):
