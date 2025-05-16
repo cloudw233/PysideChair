@@ -29,8 +29,9 @@ class Sensor(BaseModel):
     urgent_button: bool|None = None
     tilt: bool|None = None
     heart_data: int|None = None
-    smoke: Smoke|dict = {}
+    smoke: dict = {}
     seat: int|None = None
+    gps: str|None = None
 
 
 class Weather(BaseModel):

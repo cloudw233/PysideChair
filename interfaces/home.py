@@ -247,7 +247,7 @@ class Home(QFrame):
             sensor = sensor[0]
             self.Temperature.setText(f"{sensor.temp}℃")
             self.Humidity.setText(f"{sensor.humidity}%")
-            self.GPS.setText(f"{sensor.lon}, {sensor.lat}")
+            self.GPS.setText(f"{sensor.gps}")
             self.BatteryVal.setText(f"{sensor.power}")
             self.Battery.setVal(sensor.power)
 

@@ -79,8 +79,7 @@ class SensorElements(BaseElements):
     heart_data: int = None
     smoke: Smoke = None
     seat: int = None
-    lat: str = None
-    lon: str = None
+    gps: str = None
 
     class Meta:
         type = "SensorElement"
@@ -96,8 +95,7 @@ class SensorElements(BaseElements):
             heart_data: int = None,
             smoke: Smoke = None,
             seat: float = None,
-            lat: str = None,
-            lon: str = None
+            gps: str = None,
     ):
         """
         传感器元素
@@ -109,8 +107,7 @@ class SensorElements(BaseElements):
         :param heart_data: 心率数据
         :param smoke: 烟雾数据
         :param seat: 座位角度
-        :param lat: 纬度
-        :param lon: 经度
+        :param gps: GPS数据
         :return:
         """
         model = Sensor(
@@ -122,8 +119,7 @@ class SensorElements(BaseElements):
             heart_data=heart_data,
             smoke=smoke,
             seat=seat,
-            lat=lat,
-            lon=lon
+            gps=gps
         )
         return deepcopy(cls(
             temp=model.temp,
@@ -133,7 +129,8 @@ class SensorElements(BaseElements):
             tilt=model.tilt,
             heart_data=model.heart_data,
             smoke=model.smoke,
-            seat=model.seat
+            seat=model.seat,
+            gps=model.gps
         ))
 
 
