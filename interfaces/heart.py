@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout)
 from components.cards.heart import HeartCard
 from config import config
 from core.builtins.assigned_element import AccountElement, HeartElement
+from core.builtins.elements import HeartElements
 from core.builtins.message_constructors import MessageChainInstance, MessageChain
 from core.security import get_computer_id
 from core.signals import Signals
@@ -22,6 +23,8 @@ class HeartRate(QFrame):
         self.hBoxLayout.addWidget(self.card, Qt.AlignCenter)
         self.signals = Signals()
 
+        self.signals.message_received.connect(self.update_heart_rate)
+
     @Slot()
     def on_start_recording_released(self):
         self.card.IndeterminateProgressRing.start()
@@ -36,4 +39,7 @@ class HeartRate(QFrame):
 
     @Slot(MessageChainInstance)
     def update_heart_rate(self, message: MessageChainInstance):
-        self.card.update_heart_rate(message)
+        messages = message.serialize()
+        heart = [_ for _ in messages if isinstance(_,HeartElements)]
+        if len(heart) > 0:
+            self.card.update_heart_rate(heart[0].bpm)

@@ -40,4 +40,5 @@ class HeartCard(ElevatedCardWidget):
         self.LargeTitleLabel.setText(QCoreApplication.translate("Form", "心率 - NaN次/分", None))
 
     def update_heart_rate(self, message):
-        pass
+        self.LargeTitleLabel.setText(f"心率 - {message}次/分")
+        self.IndeterminateProgressRing.stop()
